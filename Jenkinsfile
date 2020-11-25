@@ -1,0 +1,31 @@
+node
+{
+properties([[$class: 'JiraProjectProperty'], buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+def mavenHome = tool name: "Maven 3.6.3"
+
+stage('CheckoutCode')
+{
+git branch: 'development', credentialsId: 'e7c56d51-76eb-4dde-aa6f-1c78f38c2b4f', url: 'https://github.com/naveenkumar0989/maven-web-application.git'
+}
+stage('Build')
+{
+sh "${mavenHome}/bin/mvn clean package"
+}
+stage('ExecuteSonarQubeReport')
+{
+sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+stage('UploadArtifactIntoNexus')
+{
+sh "${mavenHome}/bin/mvn deploy"
+}
+stage('DeployAppIntoTomcatServer')
+{
+    sshagent(['ca0ff4be-995e-4984-8c36-1a070bc10922'])
+
+{
+sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.232.235.184:/opt/apache-tomcat-9.0.39/webapps/"
+}
+}
+
+}
