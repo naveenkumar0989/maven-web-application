@@ -21,6 +21,7 @@ configFileProvider([configFile(fileId: '87e403b7-3a7b-4cfc-9309-97fd81eff6fa', t
 {
 sh "${mavenHome}/bin/mvn deploy"
 }
+}
 stage('DeployAppIntoTomcatServer')
 {
     sshagent(['ca0ff4be-995e-4984-8c36-1a070bc10922'])
