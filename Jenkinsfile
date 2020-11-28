@@ -17,6 +17,8 @@ sh "${mavenHome}/bin/mvn sonar:sonar"
 }
 stage('UploadArtifactIntoNexus')
 {
+configFileProvider([configFile(fileId: '87e403b7-3a7b-4cfc-9309-97fd81eff6fa', targetLocation: '/home/ec2-user/node1/tools/hudson.tasks.Maven_MavenInstallation/Maven_3.6.3/conf', variable: 'nexus')])
+{
 sh "${mavenHome}/bin/mvn deploy"
 }
 stage('DeployAppIntoTomcatServer')
